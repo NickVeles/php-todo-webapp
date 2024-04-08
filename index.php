@@ -11,8 +11,9 @@
 <body>
   <form action="index.php" method="post">
     <input type="text" name="task" id="task">
-    <input type="submit" value="Add">
+    <input type="submit" name="add" value="Add">
   </form>
+
   <?php
   // TODO: Put this into .env file
   $hostname = "localhost";
@@ -34,12 +35,21 @@
   }
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+    
     // Add a task
-    $task = filter_var(trim($_POST["task"]), FILTER_SANITIZE_STRING);
-    if ($task) {
-      $sql = "INSERT INTO task (title) VALUES ('{$task}')";
-      // $sql = "DELETE FROM task WHERE 1";
+    if (isset($_POST["add"])) {
+      // Trim and sanitize 
+      $task = filter_var(trim($_POST["task"]), FILTER_SANITIZE_STRING);
+      $date = date("Y-m-d H:i:s");
+      if ($task) {
+        $sql = "INSERT INTO task (title, descr, completed, created_at) VALUES ('{$task}', NULL, 0, '{$date}')";
+        // $sql = "DELETE FROM task WHERE 1"; // !> DELETE LATER
+        mysqli_query($conn, $sql);
+      }
+    } 
+    // Delete completed tasks
+    else if (isset($_POST["clear_completed"])) {
+      $sql = "DELETE FROM task WHERE completed = 1";
       mysqli_query($conn, $sql);
     }
 
@@ -54,8 +64,8 @@
 
   if (mysqli_num_rows($result) > 0) {
 
+    // Output data of each row
     echo "<ul>";
-    // output data of each row
     while ($row = mysqli_fetch_assoc($result)) {
       echo "<li>" . $row["title"] . "</li>";
     }
@@ -65,8 +75,12 @@
   }
 
   // Close the connection
-  mysqli_close($conn); 
+  mysqli_close($conn);
   ?>
+
+  <form action="index.php" method="post">
+    <input type="submit" name="clear_completed" value="Clear Completed">
+  </form>
 
 </body>
 

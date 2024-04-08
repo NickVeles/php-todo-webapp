@@ -89,14 +89,7 @@
     echo "<form action='index.php' method='post'>";
     echo "<ul>";
     foreach ($result as $row) {
-      switch ($row["completed"]) {
-        case 1:
-          $class = "strikethrough";
-          break;
-        default:
-          $class = "";
-          break;
-      }
+      $class = ($row['completed'] ? "strikethrough" : "");
       echo "<li><button type='submit' class='{$class}' name='task_{$row['id']}'>" . $row["title"] . "</button></li>";
     }
     echo "</ul>";

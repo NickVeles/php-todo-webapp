@@ -46,7 +46,6 @@
       $date = date("Y-m-d H:i:s");
       if ($task) {
         $sql = "INSERT INTO task (title, descr, completed, created_at) VALUES ('{$task}', NULL, 0, '{$date}')";
-        // $sql = "DELETE FROM task WHERE 1"; // !> DELETE LATER
         mysqli_query($conn, $sql);
       }
     }
@@ -55,6 +54,24 @@
     else if (isset($_POST["clear_completed"])) {
       $sql = "DELETE FROM task WHERE completed = 1";
       mysqli_query($conn, $sql);
+    }
+
+    // Find and handle clicked tasks
+    else {
+      $sql = "SELECT id, completed FROM task";
+      $result = mysqli_query($conn, $sql);
+
+      // Go over each task
+      foreach ($result as $row) {
+        $id = $row['id'];
+        $completed = $row['completed'];
+
+        if (isset($_POST["task_{$id}"])) {
+          // Toggle the status of selected task
+          $sql = "UPDATE task SET completed = " . ($completed ? "FALSE" : "TRUE") . " WHERE id = {$id}";
+          mysqli_query($conn, $sql);
+        }
+      }
     }
 
     // Redirect to prevent form resubmission
@@ -71,11 +88,14 @@
     // Output data of each row as a button
     echo "<form action='index.php' method='post'>";
     echo "<ul>";
-    while ($row = mysqli_fetch_assoc($result)) {
-      if ($row["completed"] == 1) {
-        $class = "strikethrough";
-      } else {
-        $class = "";
+    foreach ($result as $row) {
+      switch ($row["completed"]) {
+        case 1:
+          $class = "strikethrough";
+          break;
+        default:
+          $class = "";
+          break;
       }
       echo "<li><button type='submit' class='{$class}' name='task_{$row['id']}'>" . $row["title"] . "</button></li>";
     }

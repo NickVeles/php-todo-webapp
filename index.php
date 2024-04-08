@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+
   <title>To-do</title>
 </head>
 
@@ -35,7 +38,7 @@
   }
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
+
     // Add a task
     if (isset($_POST["add"])) {
       // Trim and sanitize 
@@ -46,7 +49,8 @@
         // $sql = "DELETE FROM task WHERE 1"; // !> DELETE LATER
         mysqli_query($conn, $sql);
       }
-    } 
+    }
+
     // Delete completed tasks
     else if (isset($_POST["clear_completed"])) {
       $sql = "DELETE FROM task WHERE completed = 1";
@@ -59,19 +63,26 @@
   }
 
   // List all tasks
-  $sql = "SELECT title FROM task";
+  $sql = "SELECT id, title, completed  FROM task";
   $result = mysqli_query($conn, $sql);
 
   if (mysqli_num_rows($result) > 0) {
 
-    // Output data of each row
+    // Output data of each row as a button
+    echo "<form action='index.php' method='post'>";
     echo "<ul>";
     while ($row = mysqli_fetch_assoc($result)) {
-      echo "<li>" . $row["title"] . "</li>";
+      if ($row["completed"] == 1) {
+        $class = "strikethrough";
+      } else {
+        $class = "";
+      }
+      echo "<li><button type='submit' class='{$class}' name='task_{$row['id']}'>" . $row["title"] . "</button></li>";
     }
     echo "</ul>";
+    echo "</form>";
   } else {
-    echo "0 results";
+    echo "No results";
   }
 
   // Close the connection

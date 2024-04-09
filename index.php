@@ -42,7 +42,7 @@
     // Add a task
     if (isset($_POST["add"])) {
       // Trim and sanitize 
-      $task = filter_var(trim($_POST["task"]), FILTER_SANITIZE_STRING);
+      $task = filter_var(trim($_POST["task"]), FILTER_SANITIZE_SPECIAL_CHARS);
       $date = date("Y-m-d H:i:s");
       if ($task) {
         $sql = "INSERT INTO task (title, descr, completed, created_at) VALUES ('{$task}', NULL, 0, '{$date}')";

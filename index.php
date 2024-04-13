@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
 
   <title>To-do</title>
 </head>
@@ -17,11 +18,24 @@
     <input type="submit" name="add" value="Add">
   </form>
 
+  <form id="sortingForm" action="index.php" method="get">
+    <select id="sortingOption" name="sortingOption">
+      <option disabled selected value="default">Sort by:</option>
+      <option value="alphAsc">A-Z</option>
+      <option value="alphDesc">Z-A</option>
+      <option value="dateAsc">Latest first</option>
+      <option value="dateDesc">Oldest first</option>
+    </select>
+  </form>
+
   <?php
+  // Start or resume the session
+  session_start();
+
   // Retrieve environmental variables
   $env_dir = ".env";
-  if (file_exists(".env")){
-    include(".env");
+  if (file_exists(".env")) {
+    include (".env");
   } else {
     $hostname = "localhost";
     $username = "root";
@@ -84,18 +98,46 @@
     exit;
   }
 
-  // List all tasks
-  $sql = "SELECT id, title, completed  FROM task";
+  // Set the sorting option
+  if (isset($_GET["sortingOption"])) {
+    $sortingOption = $_GET["sortingOption"];
+    $_SESSION["sortingOption"] = $_GET["sortingOption"];
+
+  } else if (isset($_SESSION["sortingOption"])) {
+    $sortingOption = $_SESSION["sortingOption"];
+
+  } else {
+    $sortingOption = "dateAsc";
+  }
+
+  // List all tasks based on the selected sorting option
+  switch ($sortingOption) {
+    case "alphAsc":
+      $orderBy = "title ASC";
+      break;
+    case "alphDesc":
+      $orderBy = "title DESC";
+      break;
+    case "dateDesc":
+      $orderBy = "created_at DESC"; // Latest first
+      break;
+    default:
+      $orderBy = "created_at ASC"; // Oldest first
+  }
+
+  $sql = "SELECT id, title, completed FROM task ORDER BY {$orderBy}";
   $result = mysqli_query($conn, $sql);
 
   if (mysqli_num_rows($result) > 0) {
 
     // Output data of each row as a button
     echo "<form action='index.php' method='post'>";
-    echo "<ul>";
+    echo "<ul id='taskList'>";
     foreach ($result as $row) {
       $class = ($row['completed'] ? "strikethrough" : "");
-      echo "<li><button type='submit' class='{$class}' name='task_{$row['id']}'>" . $row["title"] . "</button></li>";
+      $title = $row["title"];
+
+      echo "<li><button type='submit' class='{$class}' name='task_{$row['id']}'>" . $title . "</button></li>";
     }
     echo "</ul>";
     echo "</form>";

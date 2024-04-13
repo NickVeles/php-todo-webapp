@@ -18,11 +18,16 @@
   </form>
 
   <?php
-  // TODO: Put this into .env file
-  $hostname = "localhost";
-  $username = "root";
-  $password = "";
-  $database = "todos";
+  // Retrieve environmental variables
+  $env_dir = ".env";
+  if (file_exists(".env")){
+    include(".env");
+  } else {
+    $hostname = "localhost";
+    $username = "root";
+    $password = "";
+    $database = "todos";
+  }
 
   // Create connection
   $conn = mysqli_connect(

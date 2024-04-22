@@ -104,13 +104,16 @@
 
   // Set the sorting option
   if (isset($_GET["sortingOption"])) {
+    // ...when the user selects a new sorting option
     $sortingOption = $_GET["sortingOption"];
     $_SESSION["sortingOption"] = $_GET["sortingOption"];
 
   } else if (isset($_SESSION["sortingOption"])) {
+    // ...when there was a sorting option selected previously in session
     $sortingOption = $_SESSION["sortingOption"];
 
   } else {
+    // ...when there isn't any sorting option selected yet
     $sortingOption = "dateAsc";
   }
 

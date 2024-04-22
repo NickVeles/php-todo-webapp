@@ -68,7 +68,7 @@
       $task = filter_var(trim($_POST["task"]), FILTER_SANITIZE_SPECIAL_CHARS);
       $date = date("Y-m-d H:i:s");
       if ($task) {
-        $sql = "INSERT INTO task (title, descr, completed, created_at) VALUES ('{$task}', NULL, 0, '{$date}')";
+        $sql = "INSERT INTO task (title, descr, completed, created_at, user_id) VALUES ('{$task}', NULL, 0, '{$date}', 1)";
         mysqli_query($conn, $sql);
       }
     }

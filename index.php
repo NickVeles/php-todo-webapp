@@ -1,3 +1,12 @@
+<?php
+  // Include Composer libs
+  require_once __DIR__ . '/vendor/autoload.php';
+
+  // Load environment variables from .env
+  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+  $dotenv->load();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,22 +42,17 @@
   session_start();
 
   // Retrieve environmental variables
-  $env_dir = ".env";
-  if (file_exists(".env")) {
-    include (".env");
-  } else {
-    $hostname = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "todos";
-  }
+  $dbHost = $_ENV["DB_HOST"] ?? "localhost";
+  $dbUser = $_ENV["DB_USER"] ?? "root";
+  $dbPass = $_ENV["DB_PASS"] ?? "";
+  $dbName = $_ENV["DB_NAME"] ?? "todos";
 
   // Create connection
   $conn = mysqli_connect(
-    $hostname,
-    $username,
-    $password,
-    $database
+    $dbHost,
+    $dbUser,
+    $dbPass,
+    $dbName
   );
 
   // Check connection

@@ -1,8 +1,8 @@
-## PHP Todo Webapp
+# PHP Todo Webapp
 
-A simple webapp that stores and lists user's todos. Made with PHP and MySQL
+A simple webapp that stores and lists user's todos. Made with PHP and MySQL.
 
-### Features
+## Features
 
 Implemented:
 - Todos add and delete
@@ -14,7 +14,7 @@ Todo:
 - Visual framework
 - Upload database schema
 
-### Dependencies
+## Dependencies
 
 install dependencies with:
 `php composer.phar <dependency>`
